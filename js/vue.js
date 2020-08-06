@@ -9,6 +9,7 @@ class Vue {
         this._proxyData(this.$data)
         // 监听数据变化
         new Observer(this.$data)
+        new Compiler(this)
     }
     // 代理data中的属性
     _proxyData (data) {
