@@ -49,6 +49,10 @@ class Compiler {
             let key=RegExp.$1.trim()
             // 将文本节点中的插值表达式替换成属性对应的值，重新赋给文本节点，即将msg替换为hi
             node.textContent=value.replace(reg,this.vm[key])
+            // 创建watcher，当数据改变更新视图
+            new Watcher(this.vm,key,(newVal)=>{
+                node.textContent=newVal
+            })
         }
     }
     // 判断元素属性是否为指令，即属性的名字是否以v-开头
