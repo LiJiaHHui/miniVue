@@ -9,7 +9,7 @@ class Dep{
             this.subs.push(sub)
         }
     }
-    // 通知watcher
+    // 数据变化时通知watcher
     notify(){
         this.subs.forEach(sub =>{
             sub.update()

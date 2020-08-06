@@ -8,7 +8,7 @@ class Watcher{
         // Watch记录到dep的target中 然后会触发get调用addSub
         Dep.target=this
         this.oldVal=vm[key]
-        // 防止重复添加
+        // 防止重复添加watcher
         Dep.target=null
     }
     // 数据变化时更新视图
