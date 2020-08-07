@@ -32,26 +32,38 @@ class Compiler {
     }
     update(node,key,attrName){
         let updateFn = this[attrName + 'Updater']
-        updateFn && updateFn(node,this.vm[key])
+        // 指向compiler对象
+        updateFn && updateFn.call(this,node,this.vm[key],key)
     }
-    textUpdater(node,val){
-        node.textContent=val
+    textUpdater(node,val,key){
+        node.textContent = val
+        new Watcher(this.vm,key,(newVal)=>{
+            node.textContent=newVal
+        })
     }
-    modelUpdater(node,val){
-        node.value=val
+    modelUpdater(node,val,key){
+        // 此处node为表单元素
+        node.value = val
+        new Watcher(this.vm,key,(newVal)=>{
+            node.value = newVal
+        })
+        // 双向绑定
+        node.addEventListener('input',() =>{
+             this.vm[key] = node.value
+        })
     }
 
     // 插值表达式,正则匹配
     CompilerText(node){
         let reg = /\{\{(.+?)\}\}/
-        let value=node.textContent
+        let value = node.textContent
         if(reg.test(value)){
-            let key=RegExp.$1.trim()
+            let key = RegExp.$1.trim()
             // 将文本节点中的插值表达式替换成属性对应的值，重新赋给文本节点，即将msg替换为hi
-            node.textContent=value.replace(reg,this.vm[key])
-            // 创建watcher，当数据改变更新视图
-            new Watcher(this.vm,key,(newVal)=>{
-                node.textContent=newVal
+            node.textContent = value.replace(reg,this.vm[key])
+            // 创建watcher，回调函数中当数据改变更新视图
+            new Watcher(this.vm, key, (newVal) => {
+                node.textContent = newVal
             })
         }
     }
@@ -60,9 +72,9 @@ class Compiler {
         return attrName.startsWith('v-')
     }
     isTextNode(node){
-        return node.nodeType ===3
+        return node.nodeType === 3
     }
     isElementNode(node){
-         return node.nodeType ===1
+         return node.nodeType === 1
     }
 }
